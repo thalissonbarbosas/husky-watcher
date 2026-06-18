@@ -18,11 +18,13 @@ auto-confirm a withdrawal when a threshold is hit (off by default, double-gated)
 - **Auto-confirm (optional)** — confirm the withdrawal automatically when a
   threshold is crossed. Disabled by default and requires an explicit
   "I understand this is irreversible" acknowledgement before it will fire.
-- **Audible alert** — a short chime via an offscreen document; mutable.
+- **Audible alert** — a short chime via an offscreen document; mutable, with a
+  "play test sound" button in the popup.
+- **Force refresh** — a popup button to reload the transfers tab on demand.
 
 All thresholds and preferences live in `chrome.storage.local`. Nothing about your
 account, amounts, or rates is hardcoded — everything is read live from the page
-while you're logged in.
+while you're logged in. The toolbar icon is a purple **H** on white.
 
 ## Install (unpacked)
 
@@ -33,6 +35,17 @@ while you're logged in.
 
 > The icons are already generated and committed — nothing to build. You only
 > need `generate_icons.py` if you want to change the icon design.
+
+## How it works
+
+A content script runs on the transfers page. Once a minute it closes any open
+drawer, opens the most recent transfer's drawer (which triggers a fresh
+server-side quote), waits for the quote to populate, then reads the rate, spread,
+and totals. It evaluates that reading against your thresholds and fires at most
+one notification per tick — threshold crossing takes priority, then percent
+change, then the heartbeat. The whole page reloads every five minutes to catch
+list changes. If auto-confirm is enabled **and** acknowledged, a threshold
+crossing clicks the confirm button once for that transfer.
 
 ## Files
 
