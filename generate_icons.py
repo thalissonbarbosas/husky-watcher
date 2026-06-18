@@ -1,24 +1,37 @@
 """
-Generate neutral extension icons — a pink monitoring dot on a dark purple
-square, matching the popup theme. No external dependencies, no brand assets.
+Generate extension icons: white background with a purple uppercase "H".
+No external dependencies — pure stdlib. Anti-aliased via 8x supersampling.
 Run once: python3 generate_icons.py
 """
 import struct, zlib, os
 
-BG = (31, 15, 43)       # dark purple (#1f0f2b)
-DOT = (233, 70, 197)    # pink (#E946C5)
+BG = (255, 255, 255)    # white
+FG = (123, 63, 156)     # purple (#7B3F9C)
+SS = 8                  # supersampling factor
+
+def glyph(fx, fy):
+    """Uppercase 'H' in normalized [0,1) coords: two posts + middle bar."""
+    left = 0.26 <= fx <= 0.40 and 0.20 <= fy <= 0.80
+    right = 0.60 <= fx <= 0.74 and 0.20 <= fy <= 0.80
+    middle = 0.26 <= fx <= 0.74 and 0.44 <= fy <= 0.56
+    return left or right or middle
 
 def make_png(size, filename):
-    cx = cy = (size - 1) / 2
-    radius = size * 0.34
-
     rows = b''
     for y in range(size):
         row = b'\x00'  # filter type = None
         for x in range(size):
-            # Filled circle in the center, dark purple elsewhere.
-            inside = (x - cx) ** 2 + (y - cy) ** 2 <= radius ** 2
-            r, g, b = DOT if inside else BG
+            hits = 0
+            for sy in range(SS):
+                for sx in range(SS):
+                    fx = (x * SS + sx + 0.5) / (size * SS)
+                    fy = (y * SS + sy + 0.5) / (size * SS)
+                    if glyph(fx, fy):
+                        hits += 1
+            a = hits / (SS * SS)
+            r = round(BG[0] * (1 - a) + FG[0] * a)
+            g = round(BG[1] * (1 - a) + FG[1] * a)
+            b = round(BG[2] * (1 - a) + FG[2] * a)
             row += bytes([r, g, b])
         rows += row
 
