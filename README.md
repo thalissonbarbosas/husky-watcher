@@ -26,12 +26,13 @@ while you're logged in.
 
 ## Install (unpacked)
 
-1. Run `python3 generate_icons.py` once to (re)create the icons (optional — icons
-   are committed). Pure stdlib, no dependencies.
-2. Open `chrome://extensions`, enable **Developer mode**.
-3. Click **Load unpacked** and select this folder.
-4. Log in to app.husky.io, open the transfers page, then set your thresholds in
+1. Open `chrome://extensions`, enable **Developer mode**.
+2. Click **Load unpacked** and select this folder.
+3. Log in to app.husky.io, open the transfers page, then set your thresholds in
    the extension popup. Leave the tab open for it to keep checking.
+
+> The icons are already generated and committed — nothing to build. You only
+> need `generate_icons.py` if you want to change the icon design.
 
 ## Files
 
@@ -42,7 +43,7 @@ while you're logged in.
 | `background.js` | Service worker: notifications + offscreen audio |
 | `popup.html` / `popup.js` | Settings UI + last reading / daily stats |
 | `offscreen.html` / `offscreen.js` | Plays the alert chime |
-| `generate_icons.py` | Generates placeholder icons (pure stdlib) |
+| `generate_icons.py` | Regenerates the committed icons — optional (pure stdlib) |
 
 ## Notes
 
