@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:   #E946C5;
+      --purple: #7B3F9C;
+      --red:    #E84A3A;
+      --bg:     #120818;
+      --card:   #1f0f2b;
+      --card-2: #0e0614;
+      --line:   #3a1e4a;
+      --text:   #f3e8ff;
+      --muted:  #b59ec5;
+      --dim:    #7c5f8e;
+    }
+
+    body {
+      width: 360px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(120% 80% at 100% 0%, rgba(232, 74, 58, 0.18), transparent 60%),
+        radial-gradient(120% 80% at 0% 0%, rgba(233, 70, 197, 0.18), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    header img { width: 30px; height: 30px; }
+
+    .title {
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--pink), var(--purple) 55%, var(--red));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle { font-size: 10px; color: var(--dim); margin-top: 1px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+    .row .k { color: var(--muted); }
+    .row .v { color: var(--text); font-variant-numeric: tabular-nums; }
+    .row.big .v {
+      color: var(--red);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+    .field input[type="number"] {
+      width: 100%;
+      padding: 7px 9px;
+      background: var(--card-2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .field input[type="number"]:focus { outline: none; border-color: var(--pink); }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+    .check input { margin-top: 2px; flex-shrink: 0; accent-color: var(--pink); }
+    .check.warn { color: #fbbf24; }
+
+    button {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.05s;
+      color: #fff;
+    }
+    button:not(:disabled):hover { opacity: 0.9; }
+    button:not(:disabled):active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--red) 100%);
+      color: #fff;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 4px 14px rgba(232, 70, 197, 0.25);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      margin-top: 6px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: var(--line);
+    }
+    .status-dot.ok { background: var(--pink); }
+    .status-dot.warn { background: #fbbf24; }
+    .status-dot.err { background: var(--red); }
+
+    .note { font-size: 10px; color: var(--dim); margin-top: 8px; line-height: 1.4; }
+
+    .last-check-time { font-size: 10px; color: var(--dim); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/icon48.png" alt="Husky">
+    <div>
+      <div class="title">Husky FX Watcher</div>
+      <div class="subtitle">app.husky.io · rate tracker</div>
+    </div>
+  </header>
+
+  <div class="card">
+    <h3><span class="status-dot" id="dot"></span>Última leitura</h3>
+    <div class="last-check-time" id="last-time">—</div>
+    <div class="row"><span class="k">Spread</span><span class="v" id="r-spread">—</span></div>
+    <div class="row"><span class="k">Cotação</span><span class="v" id="r-rate">—</span></div>
+    <div class="row"><span class="k">Origem</span><span class="v" id="r-usd">—</span></div>
+    <div class="row big"><span class="k">Receberia</span><span class="v" id="r-brl">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Hoje</h3>
+    <div class="row"><span class="k">Máxima ↑</span><span class="v" id="d-high">—</span></div>
+    <div class="row"><span class="k">Mínima ↓</span><span class="v" id="d-low">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Alertas (cotação R$ / US$)</h3>
+    <div class="field">
+      <label for="rate-below">Avisar quando cotação ≤ (R$)</label>
+      <input type="number" id="rate-below" step="0.0001" min="0" placeholder="ex: 5.01">
+    </div>
+    <div class="field">
+      <label for="rate-above">Avisar quando cotação ≥ (R$)</label>
+      <input type="number" id="rate-above" step="0.0001" min="0" placeholder="ex: 5.05">
+    </div>
+    <div class="field">
+      <label for="notify-every">Notificar a cada N minutos (vazio = desativado)</label>
+      <input type="number" id="notify-every" step="1" min="1" placeholder="ex: 15">
+    </div>
+    <div class="field">
+      <label for="notify-pct">Notificar a cada X% de variação (vazio = desativado)</label>
+      <input type="number" id="notify-pct" step="0.01" min="0" placeholder="ex: 0.10">
+    </div>
+    <label class="check">
+      <input type="checkbox" id="muted">
+      <span>Silenciar som (notificação ainda aparece)</span>
+    </label>
+  </div>
+
+  <div class="card">
+    <h3>Auto-confirmar saque ⚠️</h3>
+    <label class="check">
+      <input type="checkbox" id="auto-confirm">
+      <span>Habilitar auto-confirmação quando o limiar for atingido</span>
+    </label>
+    <label class="check warn">
+      <input type="checkbox" id="auto-confirm-ack">
+      <span>Entendo que isto envia o saque imediatamente e é irreversível</span>
+    </label>
+  </div>
+
+  <button id="save-btn" class="btn-primary">Salvar</button>
+  <button id="preview-btn" class="btn-ghost">Tocar som de teste</button>
+  <button id="reload-btn" class="btn-ghost">Forçar refresh da página agora</button>
+
+  <div class="note">
+    A página é atualizada a cada 5 minutos; a modal é aberta a cada 1 minuto para pegar uma nova cotação. Deixe a aba aberta para que a extensão funcione.
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

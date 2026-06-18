@@ -1,0 +1,6 @@
+.DS_Store
+*.zip
+node_modules/
+
+# Brand assets are not redistributed
+source.png

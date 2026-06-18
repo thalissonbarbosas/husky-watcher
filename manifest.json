@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Husky FX Watcher",
+  "version": "1.0",
+  "description": "Watches the most recent transfer on app.husky.io and alerts when the FX rate crosses your thresholds.",
+  "permissions": [
+    "storage",
+    "notifications",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://app.husky.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://app.husky.io/transferencias*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Husky FX Watcher",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
